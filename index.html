@@ -10,32 +10,30 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+        
+        /* A modern CSS reset for better layout consistency */
+        * {
+            box-sizing: border-box;
+        }
+        
         /* Style for the Sudoku grid cells */
         .sudoku-cell {
-            /* Use viewport width units to make cells responsive */
-            width: 9.5vw;
-            height: 9.5vw;
-            /* Set a max size for larger screens */
-            max-width: 50px;
-            max-height: 50px;
-            /* Make font size responsive too */
-            font-size: 4.5vw;
+            /* Each cell takes up 1/9th of the container's width */
+            width: 11.111%; 
+            /* This modern CSS property keeps the cells square */
+            aspect-ratio: 1 / 1; 
+            font-size: clamp(1rem, 5vw, 1.5rem); /* Responsive font size */
             transition: background-color 0.3s, color 0.3s, border-color 0.3s;
-        }
-        @media (min-width: 540px) {
-            .sudoku-cell {
-                font-size: 24px; /* Fix font size on larger screens */
-            }
         }
         
         /* Add thicker borders to separate the 3x3 boxes */
         .sudoku-row .sudoku-cell:nth-child(3),
         .sudoku-row .sudoku-cell:nth-child(6) {
-            border-right-width: 4px;
+            border-right-width: 3px;
         }
         .sudoku-row:nth-child(3) .sudoku-cell,
         .sudoku-row:nth-child(6) .sudoku-cell {
-            border-bottom-width: 4px;
+            border-bottom-width: 3px;
         }
 
         /* Dark theme cell styles */
@@ -50,8 +48,8 @@
 </head>
 <body class="bg-slate-900 text-slate-200 flex flex-col items-center justify-center min-h-screen p-4">
 
-    <div class="bg-slate-800 p-4 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md mx-auto relative">
-
+    <div class="bg-slate-800 p-4 sm:p-6 rounded-2xl shadow-2xl w-full max-w-md mx-auto relative">
+        
         <div class="text-center mb-6">
             <h1 class="text-3xl md:text-4xl font-bold text-slate-100">Sudoku Solver</h1>
             <p class="text-slate-400 mt-2">Enter a valid Sudoku</p>
@@ -357,4 +355,5 @@
     </script>
 </body>
 </html>
+
 
