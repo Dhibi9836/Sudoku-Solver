@@ -12,10 +12,20 @@
         }
         /* Style for the Sudoku grid cells */
         .sudoku-cell {
-            width: clamp(30px, 10vw, 50px);
-            height: clamp(30px, 10vw, 50px);
-            font-size: clamp(16px, 5vw, 24px);
+            /* Use viewport width units to make cells responsive */
+            width: 9.5vw;
+            height: 9.5vw;
+            /* Set a max size for larger screens */
+            max-width: 50px;
+            max-height: 50px;
+            /* Make font size responsive too */
+            font-size: 4.5vw;
             transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+        @media (min-width: 540px) {
+            .sudoku-cell {
+                font-size: 24px; /* Fix font size on larger screens */
+            }
         }
         
         /* Add thicker borders to separate the 3x3 boxes */
@@ -40,7 +50,7 @@
 </head>
 <body class="bg-slate-900 text-slate-200 flex flex-col items-center justify-center min-h-screen p-4">
 
-    <div class="bg-slate-800 p-6 md:p-8 rounded-2xl shadow-2xl w-full max-w-max relative">
+    <div class="bg-slate-800 p-4 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md mx-auto relative">
 
         <div class="text-center mb-6">
             <h1 class="text-3xl md:text-4xl font-bold text-slate-100">Sudoku Solver</h1>
@@ -347,3 +357,4 @@
     </script>
 </body>
 </html>
+
