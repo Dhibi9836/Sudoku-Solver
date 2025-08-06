@@ -96,8 +96,9 @@
                     rowElement.className = 'sudoku-row flex';
                     for (let j = 0; j < 9; j++) {
                         const cell = document.createElement('input');
-                        cell.type = 'text';
-                        // We handle maxLength in JS now, but this is a good fallback
+                        cell.type = 'tel';
+                        cell.inputMode = 'Numeric'
+                        cell.pattern = '[1-9]'
                         cell.maxLength = 1;
                         cell.dataset.row = i;
                         cell.dataset.col = j;
@@ -113,68 +114,55 @@
             // --- Keyboard Navigation & Input ---
             boardElement.addEventListener('keydown', (e) => {
                 if (e.target.tagName !== 'INPUT') return;
-
                 const target = e.target;
-                let row = parseInt(target.dataset.row);
-                let col = parseInt(target.dataset.col);
 
-                // If board is solved and read-only, only allow navigation
-                if (target.readOnly) {
+                // Allow navigation even when read-only
+                if (e.key.startsWith('Arrow')) {
+                    e.preventDefault();
+                    let row = parseInt(target.dataset.row);
+                    let col = parseInt(target.dataset.col);
                     switch (e.key) {
-                        case 'ArrowUp': e.preventDefault(); row = row > 0 ? row - 1 : 8; break;
-                        case 'ArrowDown': e.preventDefault(); row = row < 8 ? row + 1 : 0; break;
-                        case 'ArrowLeft': e.preventDefault(); col = col > 0 ? col - 1 : 8; break;
-                        case 'ArrowRight': e.preventDefault(); col = col < 8 ? col + 1 : 0; break;
-                        default: e.preventDefault(); return; // Prevent all other actions
+                        case 'ArrowUp': row = row > 0 ? row - 1 : 8; break;
+                        case 'ArrowDown': row = row < 8 ? row + 1 : 0; break;
+                        case 'ArrowLeft': col = col > 0 ? col - 1 : 8; break;
+                        case 'ArrowRight': col = col < 8 ? col + 1 : 0; break;
                     }
-                    const nextCell = boardElement.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-                    if (nextCell) nextCell.focus();
+                    const nextCellToFocus = boardElement.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                    if (nextCellToFocus) nextCellToFocus.focus();
                     return;
                 }
 
-                // Handle digit input (1-9) to replace existing content
+                // Block input if board is solved
+                if (target.readOnly) {
+                    e.preventDefault();
+                    return;
+                }
+
+                // Handle clearing keys
+                if (e.key === ' ' || e.key === 'Backspace' || e.key === 'Delete') {
+                    e.preventDefault();
+                    target.value = '';
+                    return;
+                }
+
+                // Handle direct digit input to replace content
                 if (/^[1-9]$/.test(e.key)) {
                     e.preventDefault();
                     target.value = e.key;
-                    return;
+                } else if (e.key.length === 1) {
+                    // Block other single characters
+                    e.preventDefault();
                 }
-                
-                // Handle navigation and clearing
-                switch (e.key) {
-                    case 'ArrowUp':
-                        e.preventDefault();
-                        row = row > 0 ? row - 1 : 8;
-                        break;
-                    case 'ArrowDown':
-                        e.preventDefault();
-                        row = row < 8 ? row + 1 : 0;
-                        break;
-                    case 'ArrowLeft':
-                        e.preventDefault();
-                        col = col > 0 ? col - 1 : 8;
-                        break;
-                    case 'ArrowRight':
-                        e.preventDefault();
-                        col = col < 8 ? col + 1 : 0;
-                        break;
-                    case ' ':
-                    case 'Backspace':
-                    case 'Delete':
-                        e.preventDefault();
-                        target.value = '';
-                        return; // Exit after clearing
-                    default:
-                        // Prevent any other characters from being entered, but allow control keys
-                        if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-                           e.preventDefault();
-                        }
-                        return; // Allow keys like Tab, etc.
-                }
+                // Allow other control keys like Tab, etc.
+            });
 
-                const nextCellToFocus = boardElement.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-                if (nextCellToFocus) {
-                    nextCellToFocus.focus();
-                }
+            // Final validation for all input methods (typing, paste, mobile keyboards)
+            boardElement.addEventListener('input', (e) => {
+                if (e.target.tagName !== 'INPUT') return;
+                const cell = e.target;
+                // Sanitize the input to only allow a single digit from 1-9
+                const cleanValue = cell.value.replace(/[^1-9]/g, '');
+                cell.value = cleanValue.slice(0, 1);
             });
 
             // --- Message Display ---
@@ -355,5 +343,6 @@
     </script>
 </body>
 </html>
+
 
 
